@@ -1,5 +1,5 @@
-#ifndef STRUCTURES_H_INCLUDED
-#define STRUCTURES_H_INCLUDED
+#ifndef STRUCT_H_INCLUDED
+#define STRUCT_H_INCLUDED
 
 typedef struct
 {
@@ -8,4 +8,4 @@ typedef struct
 }
 Coordonnees;
 
-#endif // STRUCTURES_H_INCLUDED
+#endif // STRUCT_H_INCLUDED
