@@ -8,14 +8,4 @@ typedef struct
 }
 Coordonnees;
 
-typedef struct
-{
-    Coordonnees Porte;
-    Coordonnees Clees;
-    int laby;
-    int iDpassage;
-    int Verrouillage;
-}
-Passage;
-
 #endif // STRUCTURES_H_INCLUDED

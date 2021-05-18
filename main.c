@@ -4,6 +4,7 @@
 #include <time.h>
 #include "struct.h"
 
+typedef int bool;
 #define DIMX 35
 #define DIMY 23
 
@@ -15,11 +16,34 @@ void cookie (char labyrinthe[2][DIMY][DIMX+1], Coordonnees joueur, int* score, i
         printf ("Perdu, vous avez foncé sur un pic !\n");
         *touche = 8;
     }
+/* //marche pas quand c'est dans la fonction
+    if (labyrinthe[numLab][joueur.y][joueur.x]=='o' && change == TRUE)
+    {
+        printf ("Perdu, vous avez foncé sur un mur piege !\n");
+        *touche = 8;
+    }
+*/
+    if (labyrinthe[numLab][joueur.y][joueur.x]=='E')
+    {
+        printf ("Perdu, vous avez foncé sur ennemi !\n");
+        *touche = 8;
+    }
 
     if (labyrinthe[numLab][joueur.y][joueur.x]=='.')
     {
         labyrinthe[numLab][joueur.y][joueur.x] = ' ';
+    }
+
+    if (labyrinthe[numLab][joueur.y][joueur.x]==',')
+    {
+        labyrinthe[numLab][joueur.y][joueur.x] = ' ';
         *score += 100;
+    }
+
+    if (labyrinthe[numLab][joueur.y][joueur.x]=='t')
+    {
+        labyrinthe[numLab][joueur.y][joueur.x] = ' ';
+        *score += 1000;
     }
 
     if (labyrinthe[numLab][joueur.y][joueur.x]=='C')
@@ -36,23 +60,23 @@ int main()
    printf ("ERREUR\n");
 
   char labyrinthe [2][DIMY][DIMX+1]  = {{ "              #####################" ,
-                                          "              #...................#" ,
-                                          "              #        ********** #" ,
-                                          "              #   J    *        * #" ,
-                                          "              ##########       ## #" ,
-                                          "                               #  #" ,
-                                          "                               * ##" ,
-                                          "                         ******* # " ,
-                                          "                         #       # " ,
-                                          "                         # ####### " ,
-                                          "                        ## #       " ,
-                                          "                        #  #       " ,
-                                          "                        # ##       " ,
-                                          "       ########  #####  # ######## " ,
-                                          "  ######      ####   ####........# " ,
-                                          "  #.........#      #     ..#####.# " ,
-                                          "  #.######################.     .# " ,
-                                          "  #.#                    *C......# " ,
+                                          "              #,..................#" ,
+                                          "              #        **********.#" ,
+                                          "              #   J    *        *.#" ,
+                                          "              ##########       ##.#" ,
+                                          "                               #..#" ,
+                                          "                               *.##" ,
+                                          "                         *******.# " ,
+                                          "                         #......,# " ,
+                                          "                         #.####### " ,
+                                          "                        ##.#       " ,
+                                          "                        #..#       " ,
+                                          "                        #,##       " ,
+                                          "       ########  #####  #.######## " ,
+                                          "  ######......####...####.......,# " ,
+                                          "  #........,#..,...#..,....#####,# " ,
+                                          "  #.######################.     ,# " ,
+                                          "  #.#                    *C.....,# " ,
                                           "  #.#                    ######### " ,
                                           "  #.#                              " ,
                                           "  #.#                              " ,
@@ -61,20 +85,30 @@ int main()
                                         },
 
                                         {
-                                          "####################" ,
-                                          "#S......#          #" ,
-                                          "# ##....# ######## #" ,
-                                          "# ##...## ######## #" ,
-                                          "# #####       #### #" ,
-                                          "# ####### P####### #" ,
-                                          "# ################ #" ,
-                                          "#..................#" ,
-                                          "####################" ,
+                                          "                #########   " ,
+                                          "                #P.....,#   " ,
+                                          "                #######.#   " ,
+                                          "                      #.#   " ,
+                                          "      ###  #########  #.#   " ,
+                                          "      #E#  #....,..####.#   " ,
+                                          "   #### ####.##### E   .#   " ,
+                                          "   #......##.#   #.####.#   " ,
+                                          "   #.## #.  .#####.####.#   " ,
+                                          "   #.####.##,...##......#   " ,
+                                          "   #...##.   ##.#######,#   " ,
+                                          "   ###.##,....,.#     ###   " ,
+                                          "#### #.#####t####***********" ,
+                                          "#.....,##E##o####*         *" ,
+                                          "#.## #### ##.....*    ##   *" ,
+                                          "#.## ##...,...##.......S   *" ,
+                                          "#...,...# #.....,#         *" ,
+                                          "####E#### #######*         *" ,
+                                          "   ###  ###      #ooooooooo#" ,
                                           }};
 
   Coordonnees joueur;
   Coordonnees porte [2];
-
+  Coordonnees ennemies [4];
 
   int score = 0;
   int numLab = 0;
@@ -82,40 +116,52 @@ int main()
   int Tdebut = time(NULL);
   int fin = 0;
 
+int nbMob = 0;
 
-
-for (int numLab = 0; numLab < 2; numLab++)
-{
-    for ( int y = 0 ; y < DIMY; y++ )
+    for (int numLab = 0; numLab < 2; numLab++)
     {
-        for ( int x = 0 ; x < DIMX; x++ )
+        for ( int y = 0 ; y < DIMY; y++ )
         {
-            switch (labyrinthe[numLab][y][x])
+            for ( int x = 0 ; x < DIMX; x++ )
             {
-                case 'J' :  joueur.x = x;
-                            joueur.y = y;
-                            break;
-                case 'S' :  porte[numLab].x = x;
-                            porte[numLab].y = y;
+                switch (labyrinthe[numLab][y][x])
+                {
+                    case 'J' :  joueur.x = x;
+                                joueur.y = y;
+                                break;
+                    case 'E' :  ennemies[nbMob].x = x;
+                                ennemies[nbMob].y = y;
+                                nbMob++;
+                                break;
+                    case 'S' :  porte[numLab].x = x;
+                                porte[numLab].y = y;
+                }
             }
         }
     }
-}
+
 
   int touche;
-  printf ("Au debut, xJoueur=%d et yJoueur=%d dans le premier labyrinthe\n", joueur.x, joueur.y);
+  int deplacementMob [4] = {0,2,0,1};
 
-  printf ("xPorte[0]=%d et yPorte[0]=%d dans le premier labyrinthe\n", porte[0].x, porte[0].y);
-  printf ("xPorte[1]=%d et yPorte[1]=%d dans le second  labyrinthe\n", porte[1].x, porte[1].y);
-
+  bool change;
 do
 {
+    system("cls");
+
+    int Tfin = time(NULL);
+    int secondes = Tfin - Tdebut;
+
+    if (secondes % 2 == 0)
+    {
+        change = TRUE;
+    }
+    else change = FALSE;
 
     printf ("\nSCORE : %d - ", score);
-
     printf ("%s labyrinthe - ", ( numLab==0 ? "Premier" : "Second" ));
-
     printf ("Clé : %s\n\n", ( cle ? "OUI" : "NON" ));
+    printf ("Temps écoulé  : %d s\n", secondes);
 
     for ( int y = 0 ; y < DIMY; y++ )
     {
@@ -149,8 +195,22 @@ do
                                      case  'C' : printf ("©"); break;
                                      case  '*' : printf ("▒"); break;
                                      case  'P' : printf ("P"); break;
-                                }
+                                     case  'E' : printf ("☻"); break;
+                                     case  ',' : printf ("▪"); break;
+                                     case  't' : printf ("♫"); break;
 
+                                }
+                    case  'o' :
+                                if (change == FALSE)
+                                {
+                                    printf ("▬");
+                                    break;
+                                }
+                                else if (change == TRUE)
+                                {
+                                    printf ("▲");
+                                    break;
+                                }
                 }
             }
         }
@@ -158,28 +218,42 @@ do
       printf ("\n");
     }
 
+    printf ("  ↑\n");
+    printf ("← ");
+    printf ("↓ ");
+    printf ("→ ");
     printf ("\n");
-    printf ("5 : vers le haut\n");
-    printf ("1 : vers la gauche\n");
-    printf ("3 : vers la droite\n");
-    printf ("2 : vers le bas\n");
-    printf ("8 : sortir du programme\n");
-    printf ("\n");
-
-    printf ("Votre choix : ");
-
-    scanf ("%d", &touche);
-
+    printf ("-----\n");
+    printf ("  z\n");
+    printf ("q ");
+    printf ("s ");
+    printf ("d ");
     printf ("\n");
 
+    printf ("Votre choix : \n");
+
+        if(kbhit())
+        {
+            touche=getch();
+        }
+        else
+        {
+            touche = ' ';
+        }
     switch ( touche )
     {
-        case 5 : if ( labyrinthe[numLab][joueur.y-1][joueur.x   ] != '#' )
+        case 'z' : if ( labyrinthe[numLab][joueur.y-1][joueur.x   ] != '#' || labyrinthe[numLab][joueur.y-1][joueur.x   ] != 'o')
                 {
-                    while (labyrinthe[numLab][joueur.y-1][joueur.x] != '#')
+                    while (labyrinthe[numLab][joueur.y-1][joueur.x] != '#' && labyrinthe[numLab][joueur.y-1][joueur.x   ] != 'o')
                     {
                         joueur.y--;
                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
+
+                        if (labyrinthe[numLab][joueur.y-1][joueur.x   ] == 'o' && change == TRUE)
+                        {
+                            printf ("Perdu, vous avez foncé sur un mur piege !\n");
+                            touche = 8;
+                        }
                         if (touche == 8)
                         {
                             return 0;
@@ -188,12 +262,17 @@ do
 
                 }break;
 
-        case 1 : if ( labyrinthe[numLab][joueur.y  ][joueur.x -1] != '#' )
+        case 'q' : if ( labyrinthe[numLab][joueur.y  ][joueur.x -1] != '#' || labyrinthe[numLab][joueur.y][joueur.x-1] != 'o')
                 {
-                    while (labyrinthe[numLab][joueur.y][joueur.x-1] != '#')
+                    while (labyrinthe[numLab][joueur.y][joueur.x-1] != '#' && labyrinthe[numLab][joueur.y][joueur.x-1] != 'o')
                     {
                         joueur.x--;
                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
+                        if (labyrinthe[numLab][joueur.y][joueur.x-1] == 'o' && change == TRUE)
+                        {
+                            printf ("Perdu, vous avez foncé sur un mur piege !\n");
+                            touche = 8;
+                        }
                         if (touche == 8)
                         {
                             return 0;
@@ -202,12 +281,17 @@ do
 
                 }break;
 
-        case 3 : if ( labyrinthe[numLab][joueur.y  ][joueur.x +1] != '#' )
+        case 'd' : if ( labyrinthe[numLab][joueur.y  ][joueur.x +1] != '#' || labyrinthe[numLab][joueur.y][joueur.x+1] != 'o')
                 {
-                    while (labyrinthe[numLab][joueur.y][joueur.x+1] != '#')
+                    while (labyrinthe[numLab][joueur.y][joueur.x+1] != '#' && labyrinthe[numLab][joueur.y][joueur.x+1] != 'o')
                     {
                         joueur.x++;
                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
+                        if (labyrinthe[numLab][joueur.y][joueur.x+1] == 'o' && change == TRUE)
+                        {
+                            printf ("Perdu, vous avez foncé sur un mur piege !\n");
+                            touche = 8;
+                        }
                         if (touche == 8)
                         {
                             return 0;
@@ -216,12 +300,18 @@ do
                 }
                 break;
 
-        case 2 : if ( labyrinthe[numLab][joueur.y+1][joueur.x   ] != '#' )
+        case 's' : if ( labyrinthe[numLab][joueur.y+1][joueur.x   ] != '#' || labyrinthe[numLab][joueur.y+1][joueur.x   ] != 'o')
                 {
-                    while (labyrinthe[numLab][joueur.y+1][joueur.x] != '#')
+                    while (labyrinthe[numLab][joueur.y+1][joueur.x] != '#' && labyrinthe[numLab][joueur.y+1][joueur.x   ] != 'o')
                     {
                         joueur.y++;
                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
+
+                        if (labyrinthe[numLab][joueur.y+1][joueur.x   ] == 'o' && change == TRUE)
+                        {
+                            printf ("Perdu, vous avez foncé sur un mur piege !\n");
+                            touche = 8;
+                        }
                         if (touche == 8)
                         {
                             return 0;
@@ -230,38 +320,77 @@ do
                 }
                 break;
     }
+
+
 
     if (labyrinthe[numLab][joueur.y][joueur.x]=='S')
     {
         if (cle == 1)
         {
-            switch (numLab)
-            {
-                case 0 : joueur.x = porte[1].x;
-                         joueur.y = porte[1].y;
-                         numLab = 1;
-                         break;
+            joueur.x = porte[1].x;
+            joueur.y = porte[1].y;
+            numLab = 1;
+        }
+        else printf("Il faut posséder la clé !!");
+    }
 
-                case 1 : joueur.x = porte[0].x;
-                         joueur.y = porte[0].y;
-                         numLab = 0;
-            }
+if(numLab == 1)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        switch (deplacementMob[i])
+        {
+            case 0 : if (labyrinthe[numLab][ennemies[i].y-1][ennemies[i].x] != '#')
+                    {
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = ' ';
+                        ennemies[i].y--;
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = 'E';
+                    }
+                    else deplacementMob[i] = 1;
+                    break;
+
+            case 1 : if (labyrinthe[numLab][ennemies[i].y+1][ennemies[i].x] != '#')
+                    {
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = ' ';
+                        ennemies[i].y++;
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = 'E';
+                    }
+                    else deplacementMob[i] = 0;
+                    break;
+
+            case 2 : if (labyrinthe[numLab][ennemies[i].y][ennemies[i].x-1] != '#')
+                    {
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = ' ';
+                        ennemies[i].x--;
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = 'E';
+                    }
+                    else deplacementMob[i] = 3;
+                    break;
+
+            case 3 : if (labyrinthe[numLab][ennemies[i].y][ennemies[i].x+1] != '#')
+                    {
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = ' ';
+                        ennemies[i].x++;
+                        labyrinthe[numLab][ennemies[i].y][ennemies[i].x] = 'E';
+                    }
+                    else deplacementMob[i] = 2;
+                    break;
         }
     }
+}
 
     if (labyrinthe[numLab][joueur.y][joueur.x]=='P')
     {
         fin = 1;
     }
 
-    int Tfin = time(NULL);
-    int secondes = Tfin - Tdebut;
-
     if (fin == 1)
     {
         printf("Vous avez mis %d s à terminer le niveau, Bravo !\n", secondes);
         touche = 8;
     }
+
+    Sleep(50);
 }
 while ( touche != 8 );
 
