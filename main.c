@@ -7,7 +7,7 @@
 
 typedef int bool;
 #define DIMX 35
-#define DIMY 23
+#define DIMY 31
 void afficherImage ( int x ,int y ,SDL_Renderer* renderer ,char* nomFichier )
 {
      SDL_Surface* surface_image = SDL_LoadBMP (nomFichier);
@@ -15,19 +15,13 @@ void afficherImage ( int x ,int y ,SDL_Renderer* renderer ,char* nomFichier )
      if ( surface_image )
      {
          SDL_Texture* image = SDL_CreateTextureFromSurface ( renderer , surface_image );
-
          if ( image )
          {
              SDL_SetRenderTarget ( renderer , image );
-
              SDL_Rect r;
              r.x = x;
              r.y = y;
-
              SDL_QueryTexture ( image, NULL, NULL, &(r.w), &(r.h));
-
-             //printf ("On rend l'image dans le rectangle %d %d %d %d\n", r.x, r.y, r.w, r.h);
-
              SDL_RenderCopy ( renderer , image , NULL , &r);
              SDL_SetRenderTarget ( renderer , NULL );
              SDL_DestroyTexture (image);
@@ -35,7 +29,6 @@ void afficherImage ( int x ,int y ,SDL_Renderer* renderer ,char* nomFichier )
          else {
             fprintf (stderr, "Erreur de création de la texture\n");
          }
-
          SDL_FreeSurface (surface_image);
      }
      else {
@@ -85,6 +78,12 @@ void cookie (char labyrinthe[2][DIMY][DIMX+1], Coordonnees joueur, int* score, i
     {
         labyrinthe[numLab][joueur.y][joueur.x] =' ';
         *cle = 1;
+        switch (numLab)
+        {
+            case 0 : labyrinthe[0][21][3] = 's';break;
+            case 1 : labyrinthe[1][2][17] = 's';break;
+        }
+
     }
 }
 
@@ -94,10 +93,10 @@ int main(int argc, char** argv)
   if (!SetConsoleOutputCP(65001))
    printf ("ERREUR\n");
 
-  char labyrinthe [2][DIMY][DIMX+1]  = {{ "              #####################" ,
+  char labyrinthe [3][DIMY][DIMX+1]  = {{ "              #####################" ,
                                           "              #,..................#" ,
-                                          "              #        **********.#" ,
-                                          "              #   J    *        *.#" ,
+                                          "              #________**********.#" ,
+                                          "              #___J____*        *.#" ,
                                           "              ##########       ##.#" ,
                                           "                               #..#" ,
                                           "                               *.##" ,
@@ -110,7 +109,7 @@ int main(int argc, char** argv)
                                           "       ########  #####  #.######## " ,
                                           "  ######......####...####.......,# " ,
                                           "  #........,#..,...#..,....#####,# " ,
-                                          "  #.######################.     ,# " ,
+                                          "  #.######################._____,# " ,
                                           "  #.#                    *C.....,# " ,
                                           "  #.#                    ######### " ,
                                           "  #.#                              " ,
@@ -121,28 +120,62 @@ int main(int argc, char** argv)
 
                                         {
                                           "                #########   " ,
-                                          "                #P.....,#   " ,
-                                          "                #######.#   " ,
-                                          "                      #.#   " ,
+                                          "                #......,#   " ,
+                                          "                #S#####.#   " ,
+                                          "                 #    #.#   " ,
                                           "      ###  #########  #.#   " ,
                                           "      #E#  #....,..####.#   " ,
-                                          "   #### ####.##### E   .#   " ,
-                                          "   #......##.#   #.####.#   " ,
-                                          "   #.## #.  .#####.####.#   " ,
-                                          "   #.####.##,...##......#   " ,
-                                          "   #...##.   ##.#######,#   " ,
-                                          "   ###.##,....,.#     ###   " ,
+                                          "   #### ####.##### E    #   " ,
+                                          "   #......##.#___#.####.#   " ,
+                                          "   #.## #.__.#####.####.#   " ,
+                                          "   #.####.##C...##......#   " ,
+                                          "   #...##.___##.#######,#   " ,
+                                          "   ###.##,....,.#########   " ,
                                           "#### #.#####t####***********" ,
-                                          "#.....,##E##o####*         *" ,
-                                          "#.## #### ##.....*    ##   *" ,
-                                          "#.## ##...,...##.......S   *" ,
-                                          "#...,...# #.....,#         *" ,
-                                          "####E#### #######*         *" ,
+                                          "#... .,##E##o####*_________*" ,
+                                          "#.## #### ##.....*____##___*" ,
+                                          "#.## ##.. ,...##.......S___*" ,
+                                          "#... ...# #.....,#_________*" ,
+                                          "####E#### #######*_________*" ,
                                           "   ###  ###      #ooooooooo#" ,
-                                          }};
+                                          },
+
+                                          {
+                                          "     #         " ,
+                                          "    #P#        " ,
+                                          "    #.#        " ,
+                                          "#####.#########" ,
+                                          "*.....#_______*" ,
+                                          "*,_______#____*" ,
+                                          "*._#......____*" ,
+                                          "*.__.##__.____*" ,
+                                          "*.__.#....#___*" ,
+                                          "#t...#._______*" ,
+                                          "*___o#.____#__*" ,
+                                          "*____#......__*" ,
+                                          "*__________,__*" ,
+                                          "*_______#__.__*" ,
+                                          "***_____....o_*" ,
+                                          "  *__#__.__.__*" ,
+                                          "  *__....#_.__*" ,
+                                          "  *__.__t__t__*" ,
+                                          "  *__.__.#_#__*" ,
+                                          "  *_#.....____*" ,
+                                          "  #######.#####" ,
+                                          "        #.###  " ,
+                                          "#####   #...#  " ,
+                                          "#...#######,###" ,
+                                          "#.#.,...#.....#" ,
+                                          "#.#####.#.*.#.#" ,
+                                          "#.,...#.#...#.#" ,
+                                          "#_____#,#####.#" ,
+                                          "#_____#.......#" ,
+                                          "#__S__#########" ,
+                                          "#######        " ,
+                                        }};
 
   Coordonnees joueur;
-  Coordonnees porte [2];
+  Coordonnees porte [3];
   Coordonnees ennemies [4];
 
   int score = 0;
@@ -158,7 +191,7 @@ int main(int argc, char** argv)
          fprintf (stderr, "Erreur d'initialisation du mécanisme SDL : %s\n", SDL_GetError() );
          return EXIT_FAILURE;
      }
-     SDL_Window* fenetre = SDL_CreateWindow ("Exemple 5" ,SDL_WINDOWPOS_UNDEFINED ,SDL_WINDOWPOS_UNDEFINED ,1280 ,720 ,SDL_WINDOW_SHOWN);
+     SDL_Window* fenetre = SDL_CreateWindow ("Exemple 5" ,SDL_WINDOWPOS_UNDEFINED ,SDL_WINDOWPOS_UNDEFINED ,1200 ,850 ,SDL_WINDOW_SHOWN);
 
      if ( fenetre == NULL )
      {
@@ -188,11 +221,11 @@ int main(int argc, char** argv)
 
 
 
+SDL_RenderClear(renderer);
 
 
 
-
-    for (int numLab = 0; numLab < 2; numLab++)
+    for (int numLab = 0; numLab < 3; numLab++)
     {
         for ( int y = 0 ; y < DIMY; y++ )
         {
@@ -221,70 +254,190 @@ int main(int argc, char** argv)
 
     for (int i = 0; i <= numLab; i++)
     {
+        switch (i)
+        {
+            case 0 :afficherImage ( 0, 0, renderer , "img/background2.bmp");break;
+            case 1 :afficherImage ( 0, 0, renderer , "img/background.bmp");break;
+            case 2 :afficherImage ( 0, 0, renderer , "img/background3.bmp");break;
+        }
         for ( int y = 0 ; y < DIMY; y++ )
         {
             for ( int x = 0 ; x < DIMX; x++ )
             {
-                                if ( x == joueur.x && y == joueur.y )
+
+            if ( x == joueur.x && y == joueur.y )
             {
-                afficherImage ( x*16, y*16, renderer , "img/joueur.bmp");
+                switch (i)
+                {
+                case 0:
+                    afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");
+                    afficherImage ( x*25+100, y*25+100, renderer , "img/joueur.bmp");break;
+                case 1:
+                    afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                    afficherImage ( x*25+250, y*25+150, renderer , "img/joueur.bmp");break;
+                case 2:
+                    afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                    afficherImage ( x*25+400, y*25+30, renderer , "img/joueur.bmp");break;
+                }
+
             }
             else
             {
+
                 switch (labyrinthe[i][y][x])
                 {
-                    case  'C' : afficherImage ( x*16, y*16, renderer , "img/key.bmp");break;
-                    case  'S' : if (cle == 1)
-                                {
-                                    afficherImage ( x*16, y*16, renderer , "img/porteO.bmp");break;
-                                }
-                                else
-                                {
-                                    afficherImage ( x*16, y*16, renderer , "img/porteF.bmp");break;
-                                }
-                                break;
+
+                    case  'C' : switch (i)
+                    {
+                        case 0:
+                        afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");
+                        afficherImage ( x*25+100, y*25+100, renderer , "img/key.bmp");break;
+                        case 1:
+                        afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                        afficherImage ( x*25+250, y*25+150, renderer , "img/key.bmp");break;
+                    }break;
+
                     case  ',' :
                         switch (i)
                         {
-                            case 0 :afficherImage ( x*16, y*16, renderer , "img/coin.bmp");break;
-                            case 1 :afficherImage ( x*16, y*16, renderer , "img/coin2.bmp");break;
-                            case 2 :afficherImage ( x*16, y*16, renderer , "img/coin2.bmp");break;
+                            case 0 :
+                                afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");
+                                afficherImage ( x*25+100, y*25+100, renderer , "img/coin.bmp");break;
+                            case 1 :
+                                afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                                afficherImage ( x*25+250, y*25+150, renderer , "img/coin2.bmp");break;
+                            case 2 :
+                                afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                                afficherImage ( x*25+400, y*25+30, renderer , "img/coin3.bmp");break;
                         }
                         break;
-                    case  'J' : printf (" "); break;
-                    case  '*' : afficherImage ( x*16, y*16, renderer , "img/pic.bmp");break;
+
+                    case  '*' : switch (i)
+                    {
+                        case 0:
+                        afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");
+                        afficherImage ( x*25+100, y*25+100, renderer , "img/pic.bmp");break;
+                        case 1:
+                        afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                        afficherImage ( x*25+250, y*25+150, renderer , "img/pic.bmp");break;
+                        case 2:
+                        afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                        afficherImage ( x*25+400, y*25+30, renderer , "img/pic.bmp");break;
+                    }break;
                     case  '#' :
                         switch (i)
                         {
-                            case 0 : afficherImage ( x*16, y*16, renderer , "img/mur.bmp");break;
-                            case 1 : afficherImage ( x*16, y*16, renderer , "img/mur2.bmp");break;
-                            case 2 : afficherImage ( x*16, y*16, renderer , "img/mur2.bmp");break;
+                            case 0 : afficherImage ( x*25+100, y*25+100, renderer , "img/mur.bmp");break;
+                            case 1 : afficherImage ( x*25+250, y*25+150, renderer , "img/mur2.bmp");break;
+                            case 2 : afficherImage ( x*25+400, y*25+30, renderer , "img/mur3.bmp");break;
                         }
                         break;
                     case  '.' :
                         switch (i)
                         {
-                            case 0 :afficherImage ( x*16, y*16, renderer , "img/point.bmp");break;
-                            case 1 :afficherImage ( x*16, y*16, renderer , "img/point2.bmp");break;
-                            case 2 :afficherImage ( x*16, y*16, renderer , "img/point2.bmp");break;
+
+                            case 0 :
+                                afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");
+                                afficherImage ( x*25+100, y*25+100, renderer , "img/point.bmp");break;
+                            case 1 :
+                                afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                                afficherImage ( x*25+250, y*25+150, renderer , "img/point2.bmp");break;
+                            case 2 :
+                                afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                                afficherImage ( x*25+400, y*25+30, renderer , "img/point3.bmp");break;
                         }
                         break;
-                    case  ' ' :break;
-                    case  'P' :break;
-                    case  'E' : afficherImage ( x*16, y*16, renderer , "img/ennemi.bmp");break;
-                    case  't' : printf ("♫"); break;
 
-                    case  'o' :
-                                if (change == FALSE)
+                    case  'P' :
+                        afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                        afficherImage ( x*25+400, y*25+30, renderer , "img/sortie.bmp");break;
+                    case  'E' : switch(i)
+                    {
+                        case 1:
+                            afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                            afficherImage ( x*25+250, y*25+150, renderer , "img/ennemi.bmp");break;
+                        case 2:
+                            afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                            afficherImage ( x*25+400, y*25+30, renderer , "img/ennemi.bmp");break;
+                    }break;
+
+
+                    case  't' :
+                        switch (i)
+                        {
+                            case 1:
+                                afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                                afficherImage ( x*25+250, y*25+150, renderer , "img/etoile.bmp");break;
+                            case 2:
+                                afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                                afficherImage ( x*25+400, y*25+30, renderer , "img/etoile.bmp");break;
+                        }break;
+
+                    case  ' ' :break;
+                    case  '_' :
+                        switch (i)
+                            {
+                                  case 0: afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");break;
+                                  case 1: afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");break;
+                                  case 2: afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");break;
+
+                            }break;
+                    case  's' :
+                                switch (i)
                                 {
-                                    afficherImage ( x*16, y*16, renderer , "img/piegeF.bmp");break;
-                                    break;
+                                    case 0 :
+                                        afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");
+                                        afficherImage ( x*25+100, y*25+100, renderer , "img/porteO.bmp");break;
+                                    case 1 :
+                                        afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                                        afficherImage ( x*25+250, y*25+150, renderer , "img/porteO.bmp");break;
+                                    case 2 :
+                                        afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                                        afficherImage ( x*25+400, y*25+30, renderer , "img/porteO.bmp");break;
                                 }
-                                else if (change == TRUE)
-                                {
-                                    afficherImage ( x*16, y*16, renderer , "img/piegeO.bmp");break;
+                                break;
+
+                    case  'S' : switch (i)
+                                        {
+                                            case 0 :
+                                                afficherImage ( x*25+100, y*25+100, renderer , "img/sol.bmp");
+                                                afficherImage ( x*25+100, y*25+100, renderer , "img/porteF.bmp");break;
+                                            case 1 :
+                                                afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                                                afficherImage ( x*25+250, y*25+150, renderer , "img/porteF.bmp");break;
+                                            case 2 :
+                                                afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                                                afficherImage ( x*25+400, y*25+30, renderer , "img/porteF.bmp");break;
+                                        }
                                     break;
-                                }break;
+                    case  'o' :
+                                    if (change == FALSE)
+                                    {
+                                        switch (i)
+                                        {
+                                            case 1 :
+                                                afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                                                afficherImage ( x*25+250, y*25+150, renderer , "img/piegeF.bmp");break;
+                                            case 2 :
+                                                afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                                                afficherImage ( x*25+400, y*25+30, renderer , "img/piegeF.bmp");break;
+                                        }
+                                    }
+                                    else if (change == TRUE)
+                                    {
+
+                                        switch (i)
+                                        {
+                                            case 1 :
+                                                afficherImage ( x*25+250, y*25+150, renderer , "img/sol2.bmp");
+                                                afficherImage ( x*25+250, y*25+150, renderer , "img/piegeO.bmp");break;
+                                            case 2 :
+                                                afficherImage ( x*25+400, y*25+30, renderer , "img/sol3.bmp");
+                                                afficherImage ( x*25+400, y*25+30, renderer , "img/piegeO.bmp");break;
+                                        }
+                                    }break;
+
+
                 }
             }
 
@@ -292,6 +445,10 @@ int main(int argc, char** argv)
 
           printf ("\n");
         }
+            if (numLab == 1)
+            {
+                cle = 0;
+            }
         do
         {
 
@@ -305,7 +462,7 @@ int main(int argc, char** argv)
             else change = FALSE;
 
             printf ("\nSCORE : %d - ", score);
-            printf ("%s labyrinthe - ", ( numLab==0 ? "Premier" : "Second" ));
+            printf ("%s labyrinthe - ", ( numLab==0 ? "Premier" : "Second"));
             printf ("Clé : %s\n\n", ( cle ? "OUI" : "NON" ));
             printf ("Temps écoulé  : %d s\n", secondes);
 
@@ -322,11 +479,20 @@ int main(int argc, char** argv)
                                     while (labyrinthe[numLab][joueur.y-1][joueur.x] != '#' && labyrinthe[numLab][joueur.y-1][joueur.x   ] != 'o')
                                     {
                                         labyrinthe[numLab][joueur.y][joueur.x] = ' ';
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/sol.bmp");
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/sol.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/sol2.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/sol3.bmp");break;
+                                        }
                                         joueur.y--;
                                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/joueur.bmp");
-
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/joueur.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/joueur.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/joueur.bmp");break;
+                                        }
                                         if (labyrinthe[numLab][joueur.y-1][joueur.x   ] == 'o' && change == TRUE)
                                         {
                                             printf ("Perdu, vous avez foncé sur un mur piege !\n");
@@ -345,10 +511,20 @@ int main(int argc, char** argv)
                                     while (labyrinthe[numLab][joueur.y][joueur.x-1] != '#' && labyrinthe[numLab][joueur.y][joueur.x-1] != 'o')
                                     {
                                         labyrinthe[numLab][joueur.y][joueur.x] = ' ';
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/sol.bmp");
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/sol.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/sol2.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/sol3.bmp");break;
+                                        }
                                         joueur.x--;
                                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/joueur.bmp");
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/joueur4.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/joueur4.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/joueur4.bmp");break;
+                                        }
 
                                         if (labyrinthe[numLab][joueur.y][joueur.x-1] == 'o' && change == TRUE)
                                         {
@@ -368,10 +544,20 @@ int main(int argc, char** argv)
                                     while (labyrinthe[numLab][joueur.y][joueur.x+1] != '#' && labyrinthe[numLab][joueur.y][joueur.x+1] != 'o')
                                     {
                                         labyrinthe[numLab][joueur.y][joueur.x] = ' ';
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/sol.bmp");
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/sol.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/sol2.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/sol3.bmp");break;
+                                        }
                                         joueur.x++;
                                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/joueur.bmp");
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/joueur2.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/joueur2.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/joueur2.bmp");break;
+                                        }
 
                                         if (labyrinthe[numLab][joueur.y][joueur.x+1] == 'o' && change == TRUE)
                                         {
@@ -388,13 +574,23 @@ int main(int argc, char** argv)
 
                         case SDLK_s : if ( labyrinthe[numLab][joueur.y+1][joueur.x   ] != '#' || labyrinthe[numLab][joueur.y+1][joueur.x   ] != 'o')
                                 {
-                                    while (labyrinthe[numLab][joueur.y+1][joueur.x] != '#' && labyrinthe[numLab][joueur.y+1][joueur.x   ] != 'o')
+                                    while (labyrinthe[numLab][joueur.y+1][joueur.x] != '#' && labyrinthe[numLab][joueur.y+1][joueur.x   ] != 'o' && labyrinthe[numLab][joueur.y+1][joueur.x   ] != 'S')
                                     {
                                         labyrinthe[numLab][joueur.y][joueur.x] = ' ';
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/sol.bmp");
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/sol.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/sol2.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/sol3.bmp");break;
+                                        }
                                         joueur.y++;
                                         cookie (labyrinthe, joueur, &score, &cle, numLab, &touche);
-                                        afficherImage ( joueur.x*16, joueur.y*16, renderer , "img/joueur.bmp");
+                                        switch (numLab)
+                                        {
+                                            case 0 :afficherImage ( joueur.x*25+100, joueur.y*25+100, renderer , "img/joueur3.bmp");break;
+                                            case 1 :afficherImage ( joueur.x*25+250, joueur.y*25+150, renderer , "img/joueur3.bmp");break;
+                                            case 2 :afficherImage ( joueur.x*25+400, joueur.y*25+30, renderer , "img/joueur3.bmp");break;
+                                        }
 
                                         if (labyrinthe[numLab][joueur.y+1][joueur.x   ] == 'o' && change == TRUE)
                                         {
@@ -414,47 +610,68 @@ int main(int argc, char** argv)
 
 
 
-            if (labyrinthe[numLab][joueur.y][joueur.x]=='S')
+            if (labyrinthe[numLab][joueur.y][joueur.x]=='s')
             {
                 if (cle == 1)
                 {
-                    joueur.x = porte[1].x;
-                    joueur.y = porte[1].y;
-                    numLab = 1;
-                    touche = 8;
+                    switch (numLab)
+                    {
+                        case 0 :
+                                joueur.x = porte[1].x;
+                                joueur.y = porte[1].y;
+                                numLab = 1;
+                                touche = 8;
+                                break;
+                        case 1 :
+                                joueur.x = porte[2].x;
+                                joueur.y = porte[2].y;
+                                numLab = 2;
+                                touche = 8;
+                                break;
+                    }
+
                 }
-                else printf("Il faut posséder la clé !!");
+            }
+            else if (labyrinthe[numLab][joueur.y+1][joueur.x]=='S' && cle == 0)
+            {
+                printf("Il faut posséder la clé !!");
             }
 
         if(numLab == 1)
         {
             for (int e = 0; e < 4; e++)
             {
-                switch (deplacementMob[i])
+                switch (deplacementMob[e])
                 {
                     case 0 : if (labyrinthe[numLab][ennemies[e].y-1][ennemies[e].x] != '#')
                             {
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = ' ';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/sol2.bmp");
                                 ennemies[e].y--;
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = 'E';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/ennemi.bmp");
                             }
-                            else deplacementMob[i] = 1;
+                            else deplacementMob[e] = 1;
                             break;
 
                     case 1 : if (labyrinthe[numLab][ennemies[e].y+1][ennemies[e].x] != '#')
                             {
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = ' ';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/sol2.bmp");
                                 ennemies[e].y++;
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = 'E';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/ennemi.bmp");
                             }
-                            else deplacementMob[i] = 0;
+                            else deplacementMob[e] = 0;
                             break;
 
-                    case 2 : if (labyrinthe[numLab][ennemies[i].y][ennemies[i].x-1] != '#')
+                    case 2 : if (labyrinthe[numLab][ennemies[e].y][ennemies[e].x-1] != '#')
                             {
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = ' ';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/sol2.bmp");
                                 ennemies[e].x--;
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = 'E';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/ennemi.bmp");
                             }
                             else deplacementMob[e] = 3;
                             break;
@@ -462,8 +679,10 @@ int main(int argc, char** argv)
                     case 3 : if (labyrinthe[numLab][ennemies[e].y][ennemies[e].x+1] != '#')
                             {
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = ' ';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/sol2.bmp");
                                 ennemies[e].x++;
                                 labyrinthe[numLab][ennemies[e].y][ennemies[e].x] = 'E';
+                                afficherImage ( ennemies[e].x*25+250, ennemies[e].y*25+150, renderer , "img/ennemi.bmp");
                             }
                             else deplacementMob[e] = 2;
                             break;
@@ -481,12 +700,52 @@ int main(int argc, char** argv)
                 printf("Vous avez mis %d s à terminer le niveau, Bravo !\n", secondes);
                 touche = 8;
             }
-            if (numLab == 1)
+
+
+            for (int y = 0 ; y < DIMY; y++)
             {
-                cle = 0;
+                for(int x = 0 ; x < DIMX; x++)
+                {
+                    switch(labyrinthe[i][y][x])
+                    {
+                        case  'o' :
+                                    if (change == FALSE)
+                                    {
+                                        switch (numLab)
+                                        {
+                                            case 1 :afficherImage ( x*25+250, y*25+150, renderer , "img/piegeF.bmp");break;
+                                            case 2 :afficherImage ( x*25+400, y*25+30, renderer , "img/piegeF.bmp");break;
+                                        }
+
+                                    }
+                                    else if (change == TRUE)
+                                    {
+                                        switch (numLab)
+                                        {
+                                            case 1 : afficherImage ( x*25+250, y*25+150, renderer , "img/piegeO.bmp");break;
+                                            case 2 : afficherImage ( x*25+400, y*25+30, renderer , "img/piegeO.bmp");break;
+                                        }
+                                    }break;
+
+                        case  'S' :
+                            switch (numLab)
+                                        {
+                                            case 0 : afficherImage ( x*25+100, y*25+100, renderer , "img/porteF.bmp");break;
+                                            case 1 : afficherImage ( x*25+250, y*25+150, renderer , "img/porteF.bmp");break;
+                                            case 2 : afficherImage ( x*25+400, y*25+30, renderer , "img/porteF.bmp");break;
+                                        }break;
+
+                        case 's' :
+                            switch (numLab)
+                                        {
+                                            case 0 : afficherImage ( x*25+100, y*25+100, renderer , "img/porteO.bmp");break;
+                                            case 1 : afficherImage ( x*25+250, y*25+150, renderer , "img/porteO.bmp");break;
+                                            case 2 : afficherImage ( x*25+400, y*25+30, renderer , "img/porteO.bmp");break;
+                                        }break;
+
+                    }
+                }
             }
-
-
         }
         while (touche !=8);
         SDL_RenderClear (renderer);
